@@ -3,7 +3,7 @@
 API REST em Django para o app mobile **NotaFácil** (gestão de notas fiscais e garantias de produtos).
 Consumida por um app React Native/Expo em TypeScript.
 
-**Stack:** Python 3.11+, Django 5, Django REST Framework, autenticação por Token, PostgreSQL,
+**Stack:** Python 3.11+, Django 5, Django REST Framework, autenticação por Token, MySQL (driver PyMySQL),
 django-cors-headers, Pillow (fotos) e drf-spectacular (Swagger).
 
 ---
@@ -37,27 +37,21 @@ Com o ambiente ativo, o terminal mostra `(.venv)` no início da linha.
 pip install -r requirements.txt
 ```
 
-### Criar o banco no PostgreSQL
+### Criar o banco no MySQL
 
-Com o PostgreSQL instalado e rodando, crie um banco vazio chamado `notafacil`.
+Com o MySQL instalado e rodando, crie um banco vazio chamado `notafacil`.
 Escolha uma das opções:
 
-- **pgAdmin:** clique com o botão direito em *Databases* → *Create* → *Database...* → nome `notafacil`.
-- **SQL Shell (psql)** (vem com o instalador do PostgreSQL): entre com o usuário `postgres` e rode:
+- **MySQL Workbench:** conecte com o usuário `root`, abra uma aba de SQL e rode o comando abaixo.
+- **Terminal / MySQL Command Line Client:** entre com `mysql -u root -p` e rode:
 
-  ```sql
-  CREATE DATABASE notafacil;
-  ```
-
-- **Terminal** (se os programas do PostgreSQL estiverem no PATH):
-
-  ```bash
-  createdb -U postgres notafacil
-  ```
+```sql
+CREATE DATABASE notafacil CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
 ### Configurar a conexão (.env)
 
-Copie o arquivo de exemplo e coloque a senha do seu usuário `postgres`:
+Copie o arquivo de exemplo e coloque a senha do seu usuário `root` do MySQL:
 
 ```bash
 # Mac / Linux
@@ -68,10 +62,10 @@ copy .env.example .env
 
 ```ini
 DB_NAME=notafacil
-DB_USER=postgres
+DB_USER=root
 DB_PASSWORD=sua_senha_aqui
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 ```
 
 > O `.env` está no `.gitignore`: a senha **não** vai para o repositório.
@@ -133,11 +127,11 @@ Ficam no arquivo `.env`. Todas têm um valor padrão para desenvolvimento:
 
 | Variável | Padrão | Uso |
 |---|---|---|
-| `DB_NAME` | `notafacil` | Nome do banco no PostgreSQL |
-| `DB_USER` | `postgres` | Usuário do banco |
+| `DB_NAME` | `notafacil` | Nome do banco no MySQL |
+| `DB_USER` | `root` | Usuário do banco |
 | `DB_PASSWORD` | (vazio) | Senha do usuário do banco |
-| `DB_HOST` | `localhost` | Endereço do servidor PostgreSQL |
-| `DB_PORT` | `5432` | Porta do PostgreSQL |
+| `DB_HOST` | `localhost` | Endereço do servidor MySQL |
+| `DB_PORT` | `3306` | Porta do MySQL |
 | `DJANGO_SECRET_KEY` | chave de dev | Troque em produção |
 | `DJANGO_DEBUG` | `True` | `False` em produção |
 | `DJANGO_ALLOWED_HOSTS` | `*` | Lista separada por vírgula |
@@ -311,7 +305,7 @@ python manage.py test
 ```
 
 O Django cria um banco temporário `test_notafacil` e o apaga no final, então o usuário
-do `.env` precisa ter permissão para criar bancos (o `postgres` tem).
+do `.env` precisa ter permissão para criar bancos (o `root` tem).
 
 Os testes cobrem registro, login, `/auth/eu/`, 401 sem token / token inválido, CRUD, isolamento entre usuários,
 formato de data, cálculo do status da garantia e upload de foto.

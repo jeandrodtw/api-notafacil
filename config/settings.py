@@ -80,16 +80,27 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# --- Banco de dados (PostgreSQL) ---
-# Os dados de conexão vêm do arquivo .env (veja o .env.example)
+# --- Banco de dados (MySQL) ---
+# Os dados de conexão vêm do arquivo .env (veja o .env.example).
+# O driver é o PyMySQL, ativado em config/__init__.py.
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.db.backends.mysql",
         "NAME": os.environ.get("DB_NAME", "notafacil"),
-        "USER": os.environ.get("DB_USER", "postgres"),
+        "USER": os.environ.get("DB_USER", "root"),
         "PASSWORD": os.environ.get("DB_PASSWORD", ""),
         "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "PORT": os.environ.get("DB_PORT", "3306"),
+        "OPTIONS": {
+            # utf8mb4 guarda qualquer caractere (acentos, emojis)
+            "charset": "utf8mb4",
+            # modo estrito: o MySQL recusa dados inválidos em vez de cortá-los
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+        "TEST": {
+            "CHARSET": "utf8mb4",
+            "COLLATION": "utf8mb4_unicode_ci",
+        },
     }
 }
 
